@@ -1,0 +1,34 @@
+diff -r -u nrpe-2.12.orig/src/nrpe.c nrpe-2.12/src/nrpe.c
+--- nrpe-2.12.orig/src/nrpe.c	2008-03-10 21:04:43.000000000 +0000
++++ nrpe-2.12/src/nrpe.c	2010-09-02 09:55:28.000000000 +0100
+@@ -190,6 +190,12 @@
+ 	/* read the config file */
+ 	result=read_config_file(config_file);	
+ 
++	/* Added by Mark Clarkson */
++	add_command( "check_any", "/usr/lib64/nagios/plugins/$ARG1$" );
++	add_command( "check_any2", "/usr/lib64/nagios/plugins/$ARG1$ \"$ARG2$\"" );
++	add_command( "check_any3", "/usr/lib64/nagios/plugins/$ARG1$ \"$ARG2$\" \"$ARG3$\"" );
++	add_command( "check_any4", "/usr/lib64/nagios/plugins/$ARG1$ \"$ARG2$\" \"$ARG3$\" \"$ARG4$\"" );
++
+ 	/* exit if there are errors... */
+ 	if(result==ERROR){
+ 		syslog(LOG_ERR,"Config file '%s' contained errors, aborting...",config_file);
+@@ -1813,13 +1819,15 @@
+ 
+ /* tests whether a buffer contains illegal metachars */
+ int contains_nasty_metachars(char *str){
+-	int result;
++	int result, result2;
+ 
+ 	if(str==NULL)
+ 		return FALSE;
+ 	
++	/* edited by Mark Clarkson */
+ 	result=strcspn(str,NASTY_METACHARS);
+-	if(result!=strlen(str))
++	result2=strstr(str,"..");
++	if(result!=strlen(str) || result2)
+ 		return TRUE;
+ 
+ 	return FALSE;
