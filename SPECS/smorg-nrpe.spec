@@ -1,6 +1,6 @@
-%define name nrpe
+%define name smorg-nrpe
 %define version 2.12
-%define release 1
+%define release 2
 %define nsusr nagios
 %define nsgrp nagios
 %define nsport 5666
@@ -20,12 +20,17 @@ Release: %{release}
 License: GPL
 Group: Application/System
 Source0: %{name}-%{version}.tar.gz
+Patch1: nrpe-2.12-check_any.patch
 BuildRoot: %{_tmppath}/%{name}-buildroot
 Prefix: %{_prefix}
 Prefix: /etc/init.d
 Prefix: /etc/nagios
-Requires: bash, grep, nagios-plugins
+Requires: bash, grep, smorg-nagios-plugins
 PreReq: /usr/bin/logger, chkconfig, sh-utils, shadow-utils, sed, initscripts, fileutils, mktemp
+Packager: Mark Clarkson <mark.clarkson@smorg.co.uk>
+Vendor: Smorg
+Summary: Modified Nagios nrpe for Nokia x86_64 Linux Servers
+
 
 %description
 Nrpe is a system daemon that will execute various Nagios plugins
@@ -39,7 +44,7 @@ This package provides the core agent.
 %package plugin
 Group: Application/System
 Summary: Provides nrpe plugin for Nagios.
-Requires: nagios-plugins
+Requires: smorg-nagios-plugins
 
 %description plugin
 Nrpe is a system daemon that will execute various Nagios plugins
@@ -52,6 +57,7 @@ This package provides the nrpe plugin for Nagios-related applications.
 
 %prep
 %setup -q
+%patch1 -p1 -b .check_any
 
 
 %pre
@@ -63,7 +69,7 @@ else
 fi
 
 # Create `nagios' user on the system if necessary
-if id %{nsusr} ; then
+if id %{nsusr} >/dev/null 2>&1 ; then
 	: # user already exists
 else
 	/usr/sbin/useradd -r -d /var/log/nagios -s /bin/sh -c "%{nsusr}" -g %{nsgrp} %{nsusr} || \
@@ -82,6 +88,8 @@ elif [ -d /sbin/init.d ]; then
   ln -s /sbin/init.d /etc/init.d
 fi
 
+%post
+/sbin/chkconfig --add nrpe
 
 %preun
 if [ "$1" = 0 ]; then
@@ -105,8 +113,8 @@ CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" \
 	--prefix=%{_prefix} \
 	--exec-prefix=%{_prefix}/sbin \
 	--bindir=%{_prefix}/sbin \
-	--sbindir=%{_prefix}/lib/nagios/cgi \
-	--libexecdir=%{_prefix}/lib/nagios/plugins \
+	--sbindir=%{_prefix}/lib64/nagios/cgi \
+	--libexecdir=%{_prefix}/lib64/nagios/plugins \
 	--datadir=%{_prefix}/share/nagios \
 	--sysconfdir=/etc/nagios \
 	--localstatedir=/var/log/nagios \
@@ -119,13 +127,13 @@ make all
 install -d -m 0755 ${RPM_BUILD_ROOT}/etc/init.d
 install -d -m 0755 ${RPM_BUILD_ROOT}/etc/nagios
 install -d -m 0755 ${RPM_BUILD_ROOT}/usr/sbin
-install -d -m 0755 ${RPM_BUILD_ROOT}/usr/lib/nagios/plugins
+install -d -m 0755 ${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins
 
 # install templated configuration files
 cp sample-config/nrpe.cfg ${RPM_BUILD_ROOT}/etc/nagios/nrpe.cfg
 cp init-script ${RPM_BUILD_ROOT}/etc/init.d/nrpe
 cp src/nrpe ${RPM_BUILD_ROOT}/usr/sbin
-cp src/check_nrpe ${RPM_BUILD_ROOT}/usr/lib/nagios/plugins
+cp src/check_nrpe ${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -137,13 +145,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/sbin/nrpe
 %dir /etc/nagios
 %defattr(644,root,root)
-%config(noreplace) /etc/nagios/*.cfg
+%config /etc/nagios/*.cfg
 %defattr(755,%{nsusr},%{nsgrp})
 %doc Changelog LEGAL README 
 
 %files plugin
 %defattr(755,root,root)
-%{_prefix}/lib/nagios/plugins
+%{_prefix}/lib64/nagios/plugins
 %defattr(755,%{nsusr},%{nsgrp})
 %doc Changelog LEGAL README
 
