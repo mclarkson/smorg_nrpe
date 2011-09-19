@@ -25,7 +25,7 @@ BuildRoot: %{_tmppath}/%{name}-buildroot
 Prefix: %{_prefix}
 Prefix: /etc/init.d
 Prefix: /etc/nagios
-Requires: bash, grep, smorg-nagios-plugins
+Requires: bash, grep, smorg-nagios-plugins, smorg-nagios-plugins-extra
 PreReq: /usr/bin/logger, chkconfig, sh-utils, shadow-utils, sed, initscripts, fileutils, mktemp
 Packager: Mark Clarkson <mark.clarkson@smorg.co.uk>
 Vendor: Smorg
