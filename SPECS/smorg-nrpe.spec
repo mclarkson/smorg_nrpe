@@ -1,5 +1,5 @@
 %define name smorg-nrpe
-%define version 2.12
+%define version 2.13
 %define release 2
 %define nsusr nagios
 %define nsgrp nagios
@@ -20,7 +20,7 @@ Release: %{release}
 License: GPL
 Group: Application/System
 Source0: %{name}-%{version}.tar.gz
-Patch1: nrpe-2.12-check_any.patch
+Patch1: nrpe-2.13-check_any.patch
 BuildRoot: %{_tmppath}/%{name}-buildroot
 Prefix: %{_prefix}
 Prefix: /etc/init.d
@@ -29,7 +29,7 @@ Requires: bash, grep, smorg-nagios-plugins, smorg-nagios-plugins-extra
 PreReq: /usr/bin/logger, chkconfig, sh-utils, shadow-utils, sed, initscripts, fileutils, mktemp
 Packager: Mark Clarkson <mark.clarkson@smorg.co.uk>
 Vendor: Smorg
-Summary: Modified Nagios nrpe for Nokia x86_64 Linux Servers
+Summary: A modified Nagios nrpe daemon for x86_64 Linux Servers
 
 
 %description
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc Changelog LEGAL README
 
 %changelog
+* Wed Oct 17 2012 Mark Clarkson <mark.clarkson@smorg.co.uk>
+- Updated from upstream.
+
 * Mon Jan 23 2006 Andreas Kasenides ank<@>cs.ucy.ac.cy
 - fixed nrpe.cfg relocation to sample-config
 - replaced Copyright label with License
