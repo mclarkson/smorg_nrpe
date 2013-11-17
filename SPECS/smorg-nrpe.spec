@@ -26,7 +26,8 @@ Prefix: %{_prefix}
 Prefix: /etc/init.d
 Prefix: /etc/nagios
 Requires: bash, grep, smorg-nagios-plugins, smorg-nagios-plugins-extra
-PreReq: /usr/bin/logger, chkconfig, sh-utils, shadow-utils, sed, initscripts, fileutils, mktemp
+# Deprecated in RH6
+# PreReq: /usr/bin/logger, chkconfig, sh-utils, shadow-utils, sed, initscripts, fileutils, mktemp
 Packager: Mark Clarkson <mark.clarkson@smorg.co.uk>
 Vendor: Smorg
 Summary: A modified Nagios nrpe daemon for x86_64 Linux Servers
