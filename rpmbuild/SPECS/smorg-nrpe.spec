@@ -20,7 +20,7 @@ Release: %{release}
 License: GPL
 Group: Application/System
 Source0: %{name}-%{version}.tar.gz
-Patch1: nrpe-2.13-check_any.patch
+Patch1: nrpe-2.15-check_any.patch
 BuildRoot: %{_tmppath}/%{name}-buildroot
 Prefix: %{_prefix}
 Prefix: /etc/init.d

@@ -1,0 +1,72 @@
+diff -ru old/sample-config/nrpe.cfg.in new/sample-config/nrpe.cfg.in
+--- old/sample-config/nrpe.cfg.in	2013-09-06 11:27:13.000000000 -0400
++++ new/sample-config/nrpe.cfg.in	2015-11-10 11:12:12.426432278 -0500
+@@ -78,7 +78,7 @@
+ #
+ # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
+ 
+-allowed_hosts=127.0.0.1
++allowed_hosts=127.0.0.1,10.208.72.131
+  
+ 
+ 
+@@ -94,7 +94,7 @@
+ #
+ # Values: 0=do not allow arguments, 1=allow command arguments
+ 
+-dont_blame_nrpe=0
++dont_blame_nrpe=1
+ 
+ 
+ 
+@@ -216,11 +216,11 @@
+ 
+ # The following examples use hardcoded command arguments...
+ 
+-command[check_users]=@libexecdir@/check_users -w 5 -c 10
+-command[check_load]=@libexecdir@/check_load -w 15,10,5 -c 30,25,20
+-command[check_hda1]=@libexecdir@/check_disk -w 20% -c 10% -p /dev/hda1
+-command[check_zombie_procs]=@libexecdir@/check_procs -w 5 -c 10 -s Z
+-command[check_total_procs]=@libexecdir@/check_procs -w 150 -c 200 
++#command[check_users]=@libexecdir@/check_users -w 5 -c 10
++#command[check_load]=@libexecdir@/check_load -w 15,10,5 -c 30,25,20
++#command[check_hda1]=@libexecdir@/check_disk -w 20% -c 10% -p /dev/hda1
++#command[check_zombie_procs]=@libexecdir@/check_procs -w 5 -c 10 -s Z
++#command[check_total_procs]=@libexecdir@/check_procs -w 150 -c 200 
+ 
+ 
+ # The following examples allow user-supplied arguments and can
+diff -ru old/src/nrpe.c new/src/nrpe.c
+--- old/src/nrpe.c	2013-09-06 11:27:13.000000000 -0400
++++ new/src/nrpe.c	2015-11-10 11:12:39.258036228 -0500
+@@ -215,6 +215,12 @@
+ 	/* read the config file */
+ 	result=read_config_file(config_file);	
+ 
++	/* Added by Mark Clarkson */
++	add_command( "check_any", "/usr/lib64/nagios/plugins/$ARG1$" );
++	add_command( "check_any2", "/usr/lib64/nagios/plugins/$ARG1$ \"$ARG2$\"" );
++	add_command( "check_any3", "/usr/lib64/nagios/plugins/$ARG1$ \"$ARG2$\" \"$ARG3$\"" );
++	add_command( "check_any4", "/usr/lib64/nagios/plugins/$ARG1$ \"$ARG2$\" \"$ARG3$\" \"$ARG4$\"" );
++
+ 	/* exit if there are errors... */
+ 	if(result==ERROR){
+ 		syslog(LOG_ERR,"Config file '%s' contained errors, aborting...",config_file);
+@@ -1994,13 +2000,15 @@
+ 
+ /* tests whether a buffer contains illegal metachars */
+ int contains_nasty_metachars(char *str){
+-	int result;
++	int result, result2;
+ 
+ 	if(str==NULL)
+ 		return FALSE;
+ 	
++	/* edited by Mark Clarkson */
+ 	result=strcspn(str,NASTY_METACHARS);
+-	if(result!=strlen(str))
++	result2=strstr(str,"..");
++	if(result!=strlen(str) || result2)
+ 		return TRUE;
+ 
+ 	return FALSE;
