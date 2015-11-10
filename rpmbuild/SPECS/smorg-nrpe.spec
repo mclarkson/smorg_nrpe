@@ -1,6 +1,6 @@
 %define name smorg-nrpe
 %define version 2.15
-%define release 2
+%define release 3
 %define nsusr nagios
 %define nsgrp nagios
 %define nsport 5666
