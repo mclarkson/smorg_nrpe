@@ -1,5 +1,5 @@
 %define name smorg-nrpe
-%define version 2.13
+%define version 2.15
 %define release 2
 %define nsusr nagios
 %define nsgrp nagios
@@ -25,7 +25,7 @@ BuildRoot: %{_tmppath}/%{name}-buildroot
 Prefix: %{_prefix}
 Prefix: /etc/init.d
 Prefix: /etc/nagios
-Requires: bash, grep, smorg-nagios-plugins, smorg-nagios-plugins-extra
+Requires: bash, grep
 # Deprecated in RH6
 # PreReq: /usr/bin/logger, chkconfig, sh-utils, shadow-utils, sed, initscripts, fileutils, mktemp
 Packager: Mark Clarkson <mark.clarkson@smorg.co.uk>
@@ -45,7 +45,7 @@ This package provides the core agent.
 %package plugin
 Group: Application/System
 Summary: Provides nrpe plugin for Nagios.
-Requires: smorg-nagios-plugins
+#Requires: smorg-nagios-plugins
 
 %description plugin
 Nrpe is a system daemon that will execute various Nagios plugins
